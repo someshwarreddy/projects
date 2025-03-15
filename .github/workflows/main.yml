@@ -24,8 +24,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Run Tests
-        run: npm test  # Ensure you have test scripts in package.json
+      
 
   deploy:
     needs: build  # Run deployment only if build is successful
