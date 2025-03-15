@@ -1,35 +1,39 @@
-name: Deploy to Netlify
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
-      - main  # Deploy only when code is pushed to 'main'
+      - main  # Runs workflow when code is pushed to 'main' branch
+  pull_request:
+    branches:
+      - main  # Runs workflow on pull requests to 'main'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3  # Pulls the latest code
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
-      - name: Build project
-        run: npm run build  # Change this based on your project
+      - name: Run Tests
+        run: npm test  # Ensure you have test scripts in package.json
 
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v2
-        with:
-          publish-dir: './build'  # Change this based on your framework
-          production-branch: main
-          deploy-message: "Automated deployment from GitHub Actions"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          netlify-auth-token: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          netlify-site-id: ${{ secrets.NETLIFY_SITE_ID }}
+  deploy:
+    needs: build  # Run deployment only if build is successful
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Deploy only from 'main' branch
+
+    steps:
+      - name: Deploy to Server (Example)
+        run: |
+          echo "Deploying application..."
+          # Add deployment steps (e.g., SSH to server, run docker, etc.)
